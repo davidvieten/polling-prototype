@@ -1,4 +1,19 @@
+'use client';
 import { NextPage } from 'next';
+import Autocomplete from '../components/auto-complete';
+
+const players = [
+  'Lionel Messi',
+  'Cristiano Ronaldo',
+  'Neymar Jr',
+  'Kylian Mbappe',
+  'Luka Modric',
+  'Kevin De Bruyne',
+  'Virgil van Dijk',
+  'Sergio Ramos',
+  'Eden Hazard',
+  'Harry Kane',
+];
 
 const PlayerOfTheYear: NextPage = () => {
   return (
@@ -9,16 +24,12 @@ const PlayerOfTheYear: NextPage = () => {
           Vote for your favorite player of the year in the SSL by searching for their name below.
         </p>
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Search for a player..."
-            className="input input-bordered input-primary w-full mb-4"
-          />
+          <Autocomplete suggestions={players} placeholder="Search for a player..." />
         </div>
         <div>
-        <button
+          <button
             type="button"
-            className="mt-2 mr-2 bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
+            className="mt-2 bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
           >
             Submit
           </button>

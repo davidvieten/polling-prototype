@@ -25,13 +25,16 @@
     "postcss": "8.4.38",
     "prisma": "^5.15.1",
     "react": "18.3.1",
+    "react-autosuggest": "^10.1.0",
     "react-dom": "18.3.1",
+    "run": "^1.5.0",
     "tailwindcss": "3.4.3",
     "typescript": "5.4.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/react-autosuggest": "^10.1.11",
     "daisyui": "^4.11.1"
   }
 }

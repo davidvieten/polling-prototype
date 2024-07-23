@@ -43,18 +43,20 @@ const FirstTeam: NextPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-200">
-      <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-lg">
-        <h1 className="text-4xl font-bold mb-4 text-center text-black">SSL All-Star Team Voting</h1>
-        <p className="mb-6 text-center text-gray-700">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-900 p-8">
+      <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8 w-full max-w-lg">
+        <h1 className="text-4xl font-bold mb-4 text-center text-black dark:text-white">
+          SSL All-Star Team Voting
+        </h1>
+        <p className="mb-6 text-center text-gray-700 dark:text-gray-300">
           Vote for your SSL All-Star Team by selecting 4 forwards, 3 defenders, and 1 goalie.
         </p>
 
         <div className="mb-4">
-          <h2 className="text-2xl font-semibold mb-2 text-black">Forwards</h2>
+          <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Forwards</h2>
           {forwards.map((forward, index) => (
             <div key={index} className="mb-2">
-              <div className="border border-gray-300 rounded w-48">
+              <div className="border border-gray-300 dark:border-gray-600 rounded w-48">
                 <Autocomplete
                   suggestions={players}
                   placeholder={`Select forward ${index + 1}`}
@@ -65,10 +67,10 @@ const FirstTeam: NextPage = () => {
         </div>
 
         <div className="mb-4">
-          <h2 className="text-2xl font-semibold mb-2 text-black">Defenders</h2>
+          <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Defenders</h2>
           {defenders.map((defender, index) => (
             <div key={index} className="mb-2">
-              <div className="border border-gray-300 rounded w-48">
+              <div className="border border-gray-300 dark:border-gray-600 rounded w-48">
                 <Autocomplete
                   suggestions={players}
                   placeholder={`Select defender ${index + 1}`}
@@ -79,8 +81,8 @@ const FirstTeam: NextPage = () => {
         </div>
 
         <div className="mb-4">
-          <h2 className="text-2xl font-semibold mb-2 text-black">Goalie</h2>
-          <div className="border border-gray-300 rounded w-48">
+          <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Goalie</h2>
+          <div className="border border-gray-300 dark:border-gray-600 rounded w-48">
             <Autocomplete
               suggestions={players}
               placeholder="Select goalie"
@@ -91,7 +93,7 @@ const FirstTeam: NextPage = () => {
         <div>
           <button
             type="button"
-            className="mt-2 bg-black text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition duration-300"
+            className="mt-2 bg-black text-white font-bold py-2 px-4 rounded hover:bg-gray-700 dark:hover:bg-gray-600 transition duration-300"
             onClick={handleSubmit}
           >
             Submit

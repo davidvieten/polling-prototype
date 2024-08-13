@@ -7,6 +7,11 @@ import Image from 'next/image';
 const NavBar = () => {
   const { status, data: session } = useSession();
 
+  // If there is no session, don't render the navbar
+  if (status === 'unauthenticated') {
+    return null;
+  }
+
   return (
     <div className="flex items-center bg-black h-20 p-6 space-x-4">
       <Link href="/">
@@ -39,11 +44,6 @@ const NavBar = () => {
             Sign Out
           </Link>
         </div>
-      )}
-      {status === 'unauthenticated' && (
-        <Link href="/api/auth/signin" className="text-black hover:text-gray-500">
-          Login
-        </Link>
       )}
     </div>
   );

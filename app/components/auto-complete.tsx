@@ -4,6 +4,7 @@ import Autosuggest from 'react-autosuggest';
 interface AutocompleteProps {
   suggestions: string[];
   placeholder: string;
+  onValueChange: (value: string) => void; // Add the callback prop
 }
 
 interface ChangeEvent {
@@ -11,12 +12,13 @@ interface ChangeEvent {
   method: string;
 }
 
-const Autocomplete: FC<AutocompleteProps> = ({ suggestions, placeholder }) => {
+const Autocomplete: FC<AutocompleteProps> = ({ suggestions, placeholder, onValueChange }) => {
   const [value, setValue] = useState('');
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
 
   const onChange = (_event: React.FormEvent<HTMLElement>, { newValue }: ChangeEvent) => {
     setValue(newValue);
+    onValueChange(newValue); // Call the callback function
   };
 
   const onSuggestionsFetchRequested = ({ value }: { value: string }) => {

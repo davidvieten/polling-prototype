@@ -4,6 +4,7 @@ import Autosuggest from 'react-autosuggest';
 interface AutocompleteProps {
   suggestions: string[];
   placeholder: string;
+  onValueChange: (value: string) => void; // Add the callback prop
 }
 
 interface ChangeEvent {
@@ -11,12 +12,13 @@ interface ChangeEvent {
   method: string;
 }
 
-const Autocomplete: FC<AutocompleteProps> = ({ suggestions, placeholder }) => {
+const Autocomplete: FC<AutocompleteProps> = ({ suggestions, placeholder, onValueChange }) => {
   const [value, setValue] = useState('');
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
 
   const onChange = (_event: React.FormEvent<HTMLElement>, { newValue }: ChangeEvent) => {
     setValue(newValue);
+    onValueChange(newValue); // Call the callback function
   };
 
   const onSuggestionsFetchRequested = ({ value }: { value: string }) => {
@@ -37,7 +39,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ suggestions, placeholder }) => {
   const getSuggestionValue = (suggestion: string) => suggestion;
 
   const renderSuggestion = (suggestion: string, { isHighlighted }: { isHighlighted: boolean }) => (
-    <div className={`suggestion-item ${isHighlighted ? 'bg-blue-600 text-white' : 'bg-white text-black'} p-2`}>
+    <div className={`suggestion-item ${isHighlighted ? 'bg-black text-white' : 'bg-white text-black'} p-2`}>
       {suggestion}
     </div>
   );
@@ -57,7 +59,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ suggestions, placeholder }) => {
       renderSuggestion={renderSuggestion}
       inputProps={inputProps}
       theme={{
-        suggestionsContainer: 'absolute z-10 bg-white w-full shadow-lg',
+        suggestionsContainer: 'absolute z-10 bg-white w-full shadow-lg ', 
         suggestionHighlighted: 'bg-blue-600 text-white',
       }}
     />

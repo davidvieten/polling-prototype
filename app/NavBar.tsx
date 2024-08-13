@@ -2,41 +2,48 @@
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React from 'react';
-import Image from 'next/image'
+import Image from 'next/image';
 
 const NavBar = () => {
   const { status, data: session } = useSession();
+
+  // If there is no session, don't render the navbar
+  if (status === 'unauthenticated') {
+    return null;
+  }
+
   return (
-    <div className="flex items-center bg-white p-4 space-x-4">
-      <Link href="/" className="text-black hover:text-gray-500">
-        Add Image Here.
+    <div className="flex items-center bg-black h-20 p-6 space-x-4">
+      <Link href="/">
+        <Image 
+          src="/SSL23LOGO copy.png" 
+          alt="Logo" 
+          width={100} 
+          height={100} 
+          className="cursor-pointer"
+        />
       </Link>
-      <Link href="/poy" className="text-black hover:text-gray-500">
+      <Link href="/poy" className="text-white hover:text-gray-400">
         POY
       </Link>
-      <Link href="/dpoy" className="text-black hover:text-gray-500">
+      <Link href="/dpoy" className="text-white hover:text-gray-400">
         DPOY
       </Link>
-      <Link href="/coy" className="text-black hover:text-gray-500">
+      <Link href="/coy" className="text-white hover:text-gray-400">
         Coach of the Year
       </Link>
-      <Link href="/team" className="text-black hover:text-gray-500">
+      <Link href="/team" className="text-white hover:text-gray-400">
         1st Team
       </Link>
       <div className="flex-grow"></div> {/* Spacer */}
       {status === 'loading' && <div className="text-gray-400">Loading...</div>}
       {status === 'authenticated' && (
-        <div className="flex items-center text-black">
+        <div className="flex items-center text-white">
           <span>{session.user?.name}</span>
           <Link href="/api/auth/signout" className="ml-4 text-red-400 hover:text-red-600">
             Sign Out
           </Link>
         </div>
-      )}
-      {status === 'unauthenticated' && (
-        <Link href="/api/auth/signin" className="text-black hover:text-gray-500">
-          Login
-        </Link>
       )}
     </div>
   );

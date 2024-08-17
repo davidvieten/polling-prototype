@@ -50,7 +50,8 @@ export async function POST(request: NextRequest) {
       data: {
         name: body.name,
         email: body.email,
-        hashedPassword,  // Store the hashed password
+        hashedPassword: hashedPassword,
+        school: body.school,  
       },
     });
     

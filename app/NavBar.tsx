@@ -36,10 +36,12 @@ const NavBar = () => {
         1st Team
       </Link>
       <div className="flex-grow"></div> {/* Spacer */}
+      <Link href="/admin" className="text-white hover:text-gray-400">
+          Admin Dashboard
+      </Link>
       {status === 'loading' && <div className="text-gray-400">Loading...</div>}
       {status === 'authenticated' && (
         <div className="flex items-center text-white">
-          <span>{session.user?.name}</span>
           <Link href="/api/auth/signout" className="ml-4 text-red-400 hover:text-red-600">
             Sign Out
           </Link>

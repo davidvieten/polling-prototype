@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/client';
 import { z } from 'zod';
+import bcrypt from 'bcrypt';
 
 const schema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
+  password: z.string().min(6), // Added password validation
 });
 
 export async function GET(request: NextRequest) {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
     return NextResponse.json(users);
   } catch (error) {
     return NextResponse.json({ error: 'Error fetching users' }, { status: 500 });
@@ -34,11 +42,16 @@ export async function POST(request: NextRequest) {
     if (existingUser) {
       return NextResponse.json({ error: 'User already exists' }, { status: 400 });
     }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(body.password, 10);
     
     const newUser = await prisma.user.create({
       data: {
         name: body.name,
         email: body.email,
+        hashedPassword: hashedPassword,
+        school: body.school,  
       },
     });
     

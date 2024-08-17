@@ -1,15 +1,35 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import React from 'react';
 import Image from 'next/image';
 
 const NavBar = () => {
-  const { status, data: session } = useSession();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // If there is no session, don't render the navbar
-  if (status === 'unauthenticated') {
-    return null;
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await fetch('/api/users/me');
+        if (response.ok) {
+          const user = await response.json();
+          setIsAdmin(user.isAdmin);
+          console.log('User details:', user.isAdmin);
+        } else {
+          console.error('Failed to fetch user details');
+        }
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
+
+  if (loading) {
+    return <div className="text-gray-400">Loading...</div>;
   }
 
   return (
@@ -36,15 +56,19 @@ const NavBar = () => {
         1st Team
       </Link>
       <div className="flex-grow"></div> {/* Spacer */}
-      {status === 'loading' && <div className="text-gray-400">Loading...</div>}
-      {status === 'authenticated' && (
-        <div className="flex items-center text-white">
-          <span>{session.user?.name}</span>
-          <Link href="/api/auth/signout" className="ml-4 text-red-400 hover:text-red-600">
-            Sign Out
-          </Link>
-        </div>
+
+      {/* Conditionally render the Admin Dashboard link */}
+      {isAdmin && (
+        <Link href="/admin" className="text-white hover:text-gray-400">
+          Admin Dashboard
+        </Link>
       )}
+
+      <div className="flex items-center text-white">
+        <Link href="/api/auth/signout" className="ml-4 text-red-400 hover:text-red-600">
+          Sign Out
+        </Link>
+      </div>
     </div>
   );
 };

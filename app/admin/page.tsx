@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -70,7 +71,7 @@ export default async function Admin() {
             <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">
               User Management
             </h3>
-            <Link href="/admin/coaches">
+            <Link href="/admin/manage-coaches">
               <div className="block p-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition">
                 View and Manage Coaches
               </div>

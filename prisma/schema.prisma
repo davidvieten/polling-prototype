@@ -8,70 +8,70 @@ datasource db {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @map("user_id")
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
- 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "accounts_user_id_fkey")
   @@map("accounts")
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
+  @@index([userId], map: "sessions_user_id_fkey")
   @@map("sessions")
 }
- 
+
 model User {
   id             String    @id @default(cuid())
   name           String?
   email          String?   @unique
   emailVerified  DateTime? @map("email_verified")
-  hashedPassword String?
   image          String?
+  hashedPassword String?
   isAdmin        Boolean   @default(false)
-  school         String    // The school the coach is associated with
-
+  school         String
+  votes          Vote[]
   accounts       Account[]
   sessions       Session[]
-  votes          Vote[]    // Votes cast by this coach
 
   @@map("users")
 }
 
 model Player {
-  id        String   @id @default(cuid())
-  name      String
-  school    String   // The school the player is associated with
-  position  String   // Position: Forward, Defenseman, Goalie, etc.
-
-  votes     Vote[]   // Votes this player has received
+  id       String @id @default(cuid())
+  name     String
+  school   String
+  position String
+  votes    Vote[]
 }
 
 model Vote {
-  id        String   @id @default(cuid())
-  category  VoteCategory // The category this vote is for
-  userId    String   // The coach who cast the vote
-  playerId  String?  // The player who is voted for, if applicable
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  player    Player?  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  id       String       @id @default(cuid())
+  category VoteCategory
+  userId   String
+  playerId String?
+  player   Player?      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, category]) // Ensure each coach can only vote once per category
+  @@unique([userId, category])
+  @@index([playerId], map: "Vote_playerId_fkey")
 }
 
 enum VoteCategory {

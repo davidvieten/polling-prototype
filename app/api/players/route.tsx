@@ -34,3 +34,21 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Error fetching players' }, { status: 500 });
     }
 }
+
+export async function POST(request: NextRequest) {
+    try {
+        const body = await request.json();
+        const newPlayer = await prisma.player.create({
+            data: {
+                name: body.name,
+                school: body.school,
+                position: body.position,
+            },
+        });
+
+        return NextResponse.json(newPlayer, { status: 201 });
+    } catch (error) {
+        console.error('Error creating player:', error);
+        return NextResponse.json({ error: 'Error creating player' }, { status: 500 });
+    }
+}[]

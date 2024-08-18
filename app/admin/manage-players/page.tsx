@@ -1,28 +1,22 @@
 "use client"; 
 import ToggleButton from '@/app/components/toggle-button';
-import { useRouter } from 'next/navigation'; // Import the useRouter hook from next/navigation - next/router is deprecated
+import { useRouter } from 'next/navigation'; 
 import { useState } from 'react';
 
 
-export default function AddCoachPage() {
-    const router = useRouter(); 
+export default function AddPlayerPage() {
+    const router = useRouter();
 
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [position, setPosition] = useState('');
     const [school, setSchool] = useState('');
-    const [toggle, setToggle] = useState(false);
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
     };
 
-    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(event.target.value);
-    };
-
-    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(event.target.value);
+    const handlePositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPosition(event.target.value);
     };
 
     const handleSchoolChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,18 +27,18 @@ export default function AddCoachPage() {
         event.preventDefault();
 
         try {
-            const response = await fetch('/api/users', {
+            const response = await fetch('/api/users/players', {
+
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, email,school, password }),
+                body: JSON.stringify({ name, school, position}),
             });
 
             if (response.ok) {
                 setName('');
-                setEmail('');
-                setPassword('');
+                setPosition('');
                 setSchool('');
             } else {
                 console.error('Error adding coach:', response.statusText);
@@ -65,12 +59,12 @@ export default function AddCoachPage() {
                 </button>
 
                 <h1 className="text-4xl font-extrabold text-black dark:text-white mb-8">
-                    Add New Coach
+                    Add New Player
                 </h1>
 
                 <section className="bg-gray-100 dark:bg-gray-800 p-8 rounded-md shadow-md">
                     <h2 className="text-2xl font-bold text-black dark:text-white mb-6">
-                        Add Coach Details
+                        Add Player Details
                     </h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
@@ -101,48 +95,22 @@ export default function AddCoachPage() {
                         </div>
                         <div>
                             <label htmlFor="email" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
-                                Email
+                                Position
                             </label>
                             <input
-                                type="email"
-                                id="email"
-                                value={email}
-                                onChange={handleEmailChange}
+                                type="position"
+                                id="position"
+                                value={position}
+                                onChange={handlePositionChange}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
                             />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
-                                Password
-                            </label>
-                            <input
-                                type="password"
-                                id="password"
-                                value={password}
-                                onChange={handlePasswordChange}
-                                className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
-                                Admin Privaleges (Y/N)
-                            </label>
-                            <div
-                                onClick={() => setToggle(!toggle)}
-                                className={`w-12 h-6 bg-gray-300 dark:bg-gray-700 rounded-full p-1 flex items-center transition ${toggle ? 'justify-end' : 'justify-start'}`}
-                                >
-                            <div onClick={() => setToggle(!toggle)}>
-                                <ToggleButton toggle={toggle} />
-                            </div>
-                            </div>
                         </div>
                         <button
                             type="submit"
                             className="w-full py-2 px-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition"
                         >
-                            Add Coach
+                            Add Player
                         </button>
                     </form>
                 </section>

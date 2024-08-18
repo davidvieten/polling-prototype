@@ -43,6 +43,9 @@ const NavBar = () => {
           className="cursor-pointer"
         />
       </Link>
+      <Link href="/" className="text-white hover:text-gray-400">
+        Home
+      </Link>
       <Link href="/vote" className="text-white hover:text-gray-400">
         Voting Dashboard
       </Link>

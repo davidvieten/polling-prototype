@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 
+// Type for the expected structure of the Player
+type Player = {
+    name: string;
+    school: string;
+    position: string;
+};
+
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
@@ -37,7 +44,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
+        const body: Player = await request.json();
         const newPlayer = await prisma.player.create({
             data: {
                 name: body.name,
@@ -51,4 +58,4 @@ export async function POST(request: NextRequest) {
         console.error('Error creating player:', error);
         return NextResponse.json({ error: 'Error creating player' }, { status: 500 });
     }
-}[]
+}

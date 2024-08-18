@@ -27,7 +27,7 @@ export default function AddPlayerPage() {
         event.preventDefault();
 
         try {
-            const response = await fetch('/api/users/players', {
+            const response = await fetch('/api/players', {
 
                 method: 'POST',
                 headers: {
@@ -41,10 +41,10 @@ export default function AddPlayerPage() {
                 setPosition('');
                 setSchool('');
             } else {
-                console.error('Error adding coach:', response.statusText);
+                console.error('Error adding player:', response.statusText);
             }
         } catch (error) {
-            console.error('Error adding coach:', error);
+            console.error('Error adding player:', error);
         }
     };
 
@@ -85,7 +85,7 @@ export default function AddPlayerPage() {
                                 School
                             </label>
                             <input
-                                type="school"
+                                type="text"
                                 id="school"
                                 value={school}
                                 onChange={handleSchoolChange}
@@ -98,7 +98,7 @@ export default function AddPlayerPage() {
                                 Position
                             </label>
                             <input
-                                type="position"
+                                type="text"
                                 id="position"
                                 value={position}
                                 onChange={handlePositionChange}

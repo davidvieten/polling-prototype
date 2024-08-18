@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Autocomplete from '../components/auto-complete';
 
 interface PlayerOfTheYearProps {}
@@ -6,6 +6,22 @@ interface PlayerOfTheYearProps {}
 const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<string>('');
   const [hasVoted, setHasVoted] = useState<boolean>(false);
+  const [players, setPlayers] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchPlayers = async ()=> {
+      try {
+        const response = await fetch('/api/players');
+        const data = await response.json();
+        const playerNames = data.map((player: { name: string }) => player.name);
+        setPlayers(playerNames);
+
+      } catch (error) {
+        console.error('Error fetching players:', error);
+      }
+    };
+    fetchPlayers();
+  }, []);
 
   const handleSubmit = async () => {
     if (!selectedPlayer) {
@@ -54,7 +70,7 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
           </p>
           <div className="relative mb-4">
             <Autocomplete
-              suggestions={[]} // Will fetch dynamically in the dashboard
+              suggestions={players} // Will fetch dynamically in the dashboard
               placeholder="Search for a player..."
               onValueChange={setSelectedPlayer}
             />

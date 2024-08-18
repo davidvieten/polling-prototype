@@ -80,11 +80,11 @@ export default async function Admin() {
 
           <section className="mb-10">
             <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">
-              Analytics and Reports
+              Player Management
             </h3>
-            <Link href="/admin/reports">
+            <Link href="/admin/manage-players">
               <div className="block p-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition">
-                View Voting Statistics
+                View and Manage Players
               </div>
             </Link>
           </section>

@@ -19,6 +19,7 @@
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.3",
     "fast-sort": "^3.4.0",
+    "framer-motion": "^11.3.28",
     "next": "14.2.3",
     "next-auth": "^4.24.7",
     "next-cloudinary": "^6.6.2",

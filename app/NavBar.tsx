@@ -43,18 +43,13 @@ const NavBar = () => {
           className="cursor-pointer"
         />
       </Link>
-      <Link href="/poy" className="text-white hover:text-gray-400">
-        POY
+      <Link href="/" className="text-white hover:text-gray-400">
+        Home
       </Link>
-      <Link href="/dpoy" className="text-white hover:text-gray-400">
-        DPOY
+      <Link href="/vote" className="text-white hover:text-gray-400">
+        Voting Dashboard
       </Link>
-      <Link href="/coy" className="text-white hover:text-gray-400">
-        Coach of the Year
-      </Link>
-      <Link href="/team" className="text-white hover:text-gray-400">
-        1st Team
-      </Link>
+
       <div className="flex-grow"></div> {/* Spacer */}
 
       {/* Conditionally render the Admin Dashboard link */}

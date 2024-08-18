@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     providers: [
+    // provides email and password authentication
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
@@ -29,6 +30,7 @@ export const authOptions: NextAuthOptions = {
                 return passwordsMatch ? user : null;
             },
         }),
+        // provides OAuth authentication with Google
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!

@@ -12,7 +12,7 @@ async function main() {
       email: 'admin@example.com',
       hashedPassword: hashedPassword,
       isAdmin: true,
-      school: 'Admin School',
+      school: 'RAD',
     },
   });
 

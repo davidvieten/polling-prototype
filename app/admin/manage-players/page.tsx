@@ -1,8 +1,6 @@
-"use client"; 
-import ToggleButton from '@/app/components/toggle-button';
+"use client";
 import { useRouter } from 'next/navigation'; 
 import { useState } from 'react';
-
 
 export default function AddPlayerPage() {
     const router = useRouter();
@@ -15,11 +13,11 @@ export default function AddPlayerPage() {
         setName(event.target.value);
     };
 
-    const handlePositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePositionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setPosition(event.target.value);
     };
 
-    const handleSchoolChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSchoolChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSchool(event.target.value);
     };
 
@@ -28,12 +26,11 @@ export default function AddPlayerPage() {
 
         try {
             const response = await fetch('/api/players', {
-
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, school, position}),
+                body: JSON.stringify({ name, school, position }),
             });
 
             if (response.ok) {
@@ -84,27 +81,36 @@ export default function AddPlayerPage() {
                             <label htmlFor="school" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
                                 School
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 id="school"
                                 value={school}
                                 onChange={handleSchoolChange}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
-                            />
+                            >
+                                <option value="" disabled>Select School</option>
+                                <option value="PROSTRIDE">Team Prostride</option>
+                                <option value="RAD">Team RAD</option>
+                                <option value="GOLDCORE">Team Goldcore</option>
+                                <option value="PUCKS_FOR_PUPS">Team Pucks for Pups</option>
+                            </select>
                         </div>
                         <div>
-                            <label htmlFor="email" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
+                            <label htmlFor="position" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
                                 Position
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 id="position"
                                 value={position}
                                 onChange={handlePositionChange}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
-                            />
+                            >
+                                <option value="" disabled>Select Position</option>
+                                <option value="FORWARD">Forward</option>
+                                <option value="DEFENSEMAN">Defenseman</option>
+                                <option value="GOALIE">Goalie</option>
+                            </select>
                         </div>
                         <button
                             type="submit"

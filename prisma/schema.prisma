@@ -46,7 +46,7 @@ model User {
   image          String?
   hashedPassword String?
   isAdmin        Boolean   @default(false)
-  school         String
+  school         SchoolCategory
   votes          Vote[]
   accounts       Account[]
   sessions       Session[]
@@ -57,8 +57,8 @@ model User {
 model Player {
   id       String @id @default(cuid())
   name     String
-  school   String
-  position String
+  school   SchoolCategory
+  position PositionCategory
   votes    Vote[]
 }
 
@@ -79,4 +79,17 @@ enum VoteCategory {
   DEFENSEMAN_OF_THE_YEAR
   COACH_OF_THE_YEAR
   ALL_TEAM
+}
+
+enum PositionCategory {
+  FORWARD
+  DEFENSEMAN
+  GOALIE
+}
+
+enum SchoolCategory {
+  PROSTRIDE
+  RAD
+  GOLDCORE
+  PUCKS_FOR_PUPS
 }

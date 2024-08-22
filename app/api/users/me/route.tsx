@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
         name: true,
         email: true,
         isAdmin: true,
-        school: true, // This field should now be available
+        school: true, 
       },
     });
 

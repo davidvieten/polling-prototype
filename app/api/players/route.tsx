@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
+import { PositionCategory, SchoolCategory } from "@prisma/client";
 
 // Type for the expected structure of the Player
 type Player = {
@@ -13,20 +14,9 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const name = searchParams.get('name') || '';
         const school = searchParams.get('school') || '';
-        const position = searchParams.get('position') || '';
+        const position = searchParams.get('position') as PositionCategory | null;
 
         const players = await prisma.player.findMany({
-            where: {
-                name: {
-                    contains: name,
-                },
-                school: {
-                    contains: school,
-                },
-                position: {
-                    contains: position,
-                },
-            },
             select: {
                 id: true,
                 name: true,
@@ -48,8 +38,8 @@ export async function POST(request: NextRequest) {
         const newPlayer = await prisma.player.create({
             data: {
                 name: body.name,
-                school: body.school,
-                position: body.position,
+                school: body.school as SchoolCategory,
+                position: body.position as PositionCategory,
             },
         });
 

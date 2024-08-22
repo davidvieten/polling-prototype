@@ -27,7 +27,7 @@ const VotingDashboard: FC = () => {
 
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900 p-8">
-      <div className="max-w-6xl mx-auto space-y-10">
+      <div className=" max-w-6xl mx-auto space-y-10">
         <h1 className="text-4xl font-extrabold text-black dark:text-white mb-8 text-center">
           Voting Dashboard
         </h1>

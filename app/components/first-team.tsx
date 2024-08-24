@@ -79,7 +79,7 @@ const FirstTeam: FC<FirstTeamProps> = () => {
             {forwards.map((forward, index) => (
               <div key={index} className="mb-2">
                 <Autocomplete
-                  suggestions={[]} // Will fetch dynamically in the dashboard
+                  suggestions={[]} 
                   placeholder={`Select forward ${index + 1}`}
                   onValueChange={(value) => handleVoteChange('forwards', index, value)}
                 />

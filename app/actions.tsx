@@ -12,7 +12,7 @@ export const sendEmail = async (prevState: State, formData: FormData) => {
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
     await resend.emails.send({
-      from: "Shahmir <shahmir@mydevpa.ge>",
+      from: "David <dav3@williams.edu>",
       to: email,
       subject: "Form Submission",
       react: EmailTemplate({ name, email, message })

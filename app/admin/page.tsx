@@ -2,10 +2,21 @@
 import Link from "next/link";
 import { useEffect, useState } from 'react';
 import VotesList from "../components/VotesList"; // Import the VotesList component
+import AwardCard from "../components/AwardCard";
+import AllStarTeamCard from "../components/AllStarTeamCard";
 
 const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const playerOfTheYearNominees = ['Player 1', 'Player 2', 'Player 3'];
+  const coachOfTheYearNominees = ['Coach 1', 'Coach 2', 'Coach 3'];
+  const defensivePlayerOfTheYearNominees = ['Player 1', 'Player 2', 'Player 3', ];
+  const allStarTeam = {
+    forwards: ['Forward 1', 'Forward 2', 'Forward 3', 'Forward 4'],
+    defensemen: ['Defenseman 1', 'Defenseman 2', 'Defenseman 3'],
+    goalie: 'Goalie 1'
+  };
+
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -61,6 +72,12 @@ const Admin = () => {
           <p className="text-gray-700 dark:text-gray-300 mb-6">
             This is the administration area where you can manage the voting system, view results, and manage coaches.
           </p>
+          <div className="container">
+            <AwardCard title="Player of the Year" nominees={playerOfTheYearNominees} />
+            <AwardCard title="Defenseman of the Year" nominees={defensivePlayerOfTheYearNominees} />
+            <AwardCard title="Coach of the Year" nominees={coachOfTheYearNominees} />
+            <AllStarTeamCard {...allStarTeam} />
+          </div>
 
           <section className="mb-10">
             <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">
@@ -76,11 +93,11 @@ const Admin = () => {
 
           <section className="mb-10">
             <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">
-              Manage Deadlines
+              Send Email
             </h3>
-            <Link href="/admin/categories">
+            <Link href="/admin/send-emails">
               <div className="block p-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition">
-                Place time restrictions on voting
+                Alert coaches of updates.
               </div>
             </Link>
           </section>

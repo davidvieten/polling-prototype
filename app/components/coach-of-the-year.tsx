@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Autocomplete from '../components/auto-complete';
 
 interface CoachOfTheYearProps {}
@@ -6,6 +6,20 @@ interface CoachOfTheYearProps {}
 const CoachOfTheYear: FC<CoachOfTheYearProps> = () => {
   const [selectedCoach, setSelectedCoach] = useState<string>('');
   const [hasVoted, setHasVoted] = useState<boolean>(false);
+  const [coaches, setCoaches] = useState<{ name: string; id: string }[]>([]);
+
+  useEffect(() => {
+    const fetchCoaches = async () => {
+      try {
+        const response = await fetch('/api/users'); 
+        const data = await response.json();
+        setCoaches(data); 
+      } catch (error) {
+        console.error('Error fetching coaches:', error);
+      }
+    };
+    fetchCoaches();
+  }, []);
 
   const handleSubmit = async () => {
     if (!selectedCoach) {
@@ -14,14 +28,20 @@ const CoachOfTheYear: FC<CoachOfTheYearProps> = () => {
     }
 
     try {
-      const response = await fetch('/api/users', {
+      const coach = coaches.find(coach => coach.name === selectedCoach);
+      if (!coach) {
+        alert('Coach not found.');
+        return;
+      }
+
+      const response = await fetch('/api/votes/coaches', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: selectedCoach,
-          email: `${selectedCoach.toLowerCase().replace(' ', '.')}@example.com`,
+          category: 'COACH_OF_THE_YEAR',
+          coachId: coach.id, 
         }),
       });
 
@@ -29,10 +49,11 @@ const CoachOfTheYear: FC<CoachOfTheYearProps> = () => {
         throw new Error('Something went wrong');
       }
 
-      const data = await response.json();
       setHasVoted(true);
+      alert(`You voted for: ${selectedCoach}`);
     } catch (error) {
       console.error(error);
+      alert('Failed to submit vote');
     }
   };
 
@@ -53,7 +74,7 @@ const CoachOfTheYear: FC<CoachOfTheYearProps> = () => {
           </p>
           <div className="relative mb-4">
             <Autocomplete
-              suggestions={[]} // Will fetch dynamically in the dashboard
+              suggestions={coaches.map(coach => coach.name)} 
               placeholder="Search for a coach..."
               onValueChange={setSelectedCoach}
             />

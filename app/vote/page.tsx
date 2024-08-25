@@ -15,7 +15,6 @@ const VotingDashboard: FC = () => {
         const response = await fetch('/api/players');
         const data = await response.json();
 
-        // Assume data is an array of players and each player has a name and school
         setPlayers(data.map((player: { name: string }) => player.name));
       } catch (error) {
         console.error('Error fetching players:', error);
@@ -26,27 +25,27 @@ const VotingDashboard: FC = () => {
   }, []);
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900 p-8">
+    <main className="min-h-sc</div>reen bg-white dark:bg-gray-900 p-8">
       <div className=" max-w-6xl mx-auto space-y-10">
         <h1 className="text-4xl font-extrabold text-black dark:text-white mb-8 text-center">
           Voting Dashboard
         </h1>
+        <div className='wrapper'>
+          <div>
+            <FirstTeam />
+          </div>
+          <div>
+            <CoachOfTheYear />
+          </div>
+          <div>
+            <PlayerOfTheYear />
+          </div>
+          <div>
+            <DefensivePlayerOfTheYear />
+          </div>
 
-        <section>
-          <CoachOfTheYear />
-        </section>
+        </div>
 
-        <section>
-          <DefensivePlayerOfTheYear />
-        </section>
-
-        <section>
-          <PlayerOfTheYear />
-        </section>
-
-        <section>
-          <FirstTeam />
-        </section>
       </div>
     </main>
   );

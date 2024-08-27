@@ -1,8 +1,7 @@
-"use client"; 
+'use client'; 
 import ToggleButton from '@/app/components/toggle-button';
-import { useRouter } from 'next/navigation'; // Import the useRouter hook from next/navigation - next/router is deprecated
+import { useRouter } from 'next/navigation'; 
 import { useState } from 'react';
-
 
 export default function AddCoachPage() {
     const router = useRouter(); 
@@ -11,23 +10,6 @@ export default function AddCoachPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [school, setSchool] = useState('');
-    const [toggle, setToggle] = useState(false);
-
-    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-    };
-
-    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(event.target.value);
-    };
-
-    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(event.target.value);
-    };
-
-    const handleSchoolChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSchool(event.target.value);
-    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -38,7 +20,7 @@ export default function AddCoachPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, email,school, password }),
+                body: JSON.stringify({ name, email, school, password, }),
             });
 
             if (response.ok) {
@@ -46,6 +28,7 @@ export default function AddCoachPage() {
                 setEmail('');
                 setPassword('');
                 setSchool('');
+                router.back(); 
             } else {
                 console.error('Error adding coach:', response.statusText);
             }
@@ -81,7 +64,7 @@ export default function AddCoachPage() {
                                 type="text"
                                 id="name"
                                 value={name}
-                                onChange={handleNameChange}
+                                onChange={(e) => setName(e.target.value)}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
                             />
@@ -90,14 +73,19 @@ export default function AddCoachPage() {
                             <label htmlFor="school" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
                                 School
                             </label>
-                            <input
-                                type="school"
+                            <select
                                 id="school"
                                 value={school}
-                                onChange={handleSchoolChange}
+                                onChange={(e) => setSchool(e.target.value)}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
-                            />
+                            >
+                                <option value="" disabled>Select School</option>
+                                <option value="PROSTRIDE">Team Prostride</option>
+                                <option value="RAD">Team RAD</option>
+                                <option value="GOLDCORE">Team Goldcore</option>
+                                <option value="PUCKS_FOR_PUPS">Team Pucks for Pups</option>
+                            </select>
                         </div>
                         <div>
                             <label htmlFor="email" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
@@ -107,7 +95,7 @@ export default function AddCoachPage() {
                                 type="email"
                                 id="email"
                                 value={email}
-                                onChange={handleEmailChange}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
                             />
@@ -120,23 +108,10 @@ export default function AddCoachPage() {
                                 type="password"
                                 id="password"
                                 value={password}
-                                onChange={handlePasswordChange}
+                                onChange={(e) => setPassword(e.target.value)}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
                             />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
-                                Admin Privaleges (Y/N)
-                            </label>
-                            <div
-                                onClick={() => setToggle(!toggle)}
-                                className={`w-12 h-6 bg-gray-300 dark:bg-gray-700 rounded-full p-1 flex items-center transition ${toggle ? 'justify-end' : 'justify-start'}`}
-                                >
-                            <div onClick={() => setToggle(!toggle)}>
-                                <ToggleButton toggle={toggle} />
-                            </div>
-                            </div>
                         </div>
                         <button
                             type="submit"

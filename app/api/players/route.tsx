@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 import { PositionCategory, SchoolCategory } from "@prisma/client";
 
-// Type for the expected structure of the Player
 type Player = {
     name: string;
     school: string;

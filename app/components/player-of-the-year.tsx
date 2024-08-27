@@ -6,21 +6,37 @@ interface PlayerOfTheYearProps {}
 const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<string>('');
   const [hasVoted, setHasVoted] = useState<boolean>(false);
-  const [players, setPlayers] = useState<string[]>([]);
+  const [players, setPlayers] = useState<{ name: string; id: string }[]>([]);
+  const [votedPlayer, setVotedPlayer] = useState<string>('');
 
   useEffect(() => {
-    const fetchPlayers = async ()=> {
+    const fetchPlayers = async () => {
       try {
         const response = await fetch('/api/players');
         const data = await response.json();
-        const playerNames = data.map((player: { name: string }) => player.name);
-        setPlayers(playerNames);
-
+        setPlayers(data); 
       } catch (error) {
         console.error('Error fetching players:', error);
       }
     };
+
+    const checkIfVoted = async () => {
+      try {
+        const response = await fetch('/api/votes/players?category=PLAYER_OF_THE_YEAR');
+        if (response.ok) {
+          const vote = await response.json();
+          if (vote && vote.length > 0) {
+            setHasVoted(true);
+            setVotedPlayer(vote[0].player.name); 
+          }
+        }
+      } catch (error) {
+        console.error('Error checking vote status:', error);
+      }
+    };
+
     fetchPlayers();
+    checkIfVoted();
   }, []);
 
   const handleSubmit = async () => {
@@ -30,14 +46,20 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
     }
 
     try {
-      const response = await fetch('/api/votes', {
+      const player = players.find(player => player.name === selectedPlayer);
+      if (!player) {
+        alert('Player not found.');
+        return;
+      }
+
+      const response = await fetch('/api/votes/players', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           category: 'PLAYER_OF_THE_YEAR',
-          player: selectedPlayer,
+          playerId: player.id, 
         }),
       });
 
@@ -46,6 +68,7 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
       }
 
       setHasVoted(true);
+      setVotedPlayer(selectedPlayer);
       alert(`You voted for: ${selectedPlayer}`);
     } catch (error) {
       console.error(error);
@@ -61,7 +84,7 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
       {hasVoted ? (
         <div className="text-center">
           <p className="mb-4 text-gray-700 dark:text-gray-300">Thank you for voting!</p>
-          <p className="font-bold text-black dark:text-white">You voted for: {selectedPlayer}</p>
+          <p className="font-bold text-black dark:text-white">You voted for: {votedPlayer}</p>
         </div>
       ) : (
         <>
@@ -70,7 +93,7 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
           </p>
           <div className="relative mb-4">
             <Autocomplete
-              suggestions={players} // Will fetch dynamically in the dashboard
+              suggestions={players.map(player => player.name)} 
               placeholder="Search for a player..."
               onValueChange={setSelectedPlayer}
             />

@@ -1,11 +1,16 @@
 'use client';
 import Link from "next/link";
 import { useEffect, useState } from 'react';
-import VotesList from "../components/VotesList"; // Import the VotesList component
 
-const Admin = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
+interface AllStarTeam {
+  forwards: string[];
+  defensemen: string[];
+  goalie: string;
+}
+
+const Admin: React.FC = () => {
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -14,7 +19,6 @@ const Admin = () => {
         if (response.ok) {
           const user = await response.json();
           setIsAdmin(user.isAdmin);
-          console.log('User details:', user.isAdmin);
         } else {
           console.error('Failed to fetch user details');
         }
@@ -24,7 +28,6 @@ const Admin = () => {
         setLoading(false);
       }
     };
-
     fetchUserDetails();
   }, []);
 
@@ -61,33 +64,20 @@ const Admin = () => {
           <p className="text-gray-700 dark:text-gray-300 mb-6">
             This is the administration area where you can manage the voting system, view results, and manage coaches.
           </p>
-
           <section className="mb-10">
             <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">
-              All Votes
+              Current Results
             </h3>
-            <Link href="/admin/display-votes">
+            <Link href="/admin/results">
               <div className="block p-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition">
-                View all votes
-              </div>
-            </Link>
-          </section>
-
-
-          <section className="mb-10">
-            <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">
-              Manage Deadlines
-            </h3>
-            <Link href="/admin/categories">
-              <div className="block p-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition">
-                Place time restrictions on voting
+                View current results.
               </div>
             </Link>
           </section>
 
           <section className="mb-10">
             <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">
-              User Management
+              Coach Management
             </h3>
             <Link href="/admin/manage-coaches">
               <div className="block p-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition">
@@ -103,17 +93,6 @@ const Admin = () => {
             <Link href="/admin/manage-players">
               <div className="block p-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition">
                 View and Manage Players
-              </div>
-            </Link>
-          </section>
-
-          <section className="mb-10">
-            <h3 className="text-2xl font-semibold text-black dark:text-white mb-4">
-              System Settings
-            </h3>
-            <Link href="/admin/settings">
-              <div className="block p-4 bg-gray-500 text-white rounded-md shadow-md hover:bg-gray-600 transition">
-                Configure System Settings
               </div>
             </Link>
           </section>

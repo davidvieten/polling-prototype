@@ -2,10 +2,32 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getProviders, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const NavBar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { status } = useSession();
+  const router = useRouter();
+
+  const [providers, setProviders] = useState<Record<string, any> | null>(null);
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      const res = await getProviders();
+      setProviders(res);
+    };
+
+    fetchProviders();
+  }, []);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      setIsAuthenticated(true);
+    }
+  }, [status, router]);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -49,21 +71,21 @@ const NavBar = () => {
       <Link href="/vote" className="text-white hover:text-gray-400">
         Voting Dashboard
       </Link>
-
-      <div className="flex-grow"></div> {/* Spacer */}
-
+      <div className="flex-grow"></div> 
       {/* Conditionally render the Admin Dashboard link */}
       {isAdmin && (
         <Link href="/admin" className="text-white hover:text-gray-400">
           Admin Dashboard
         </Link>
       )}
-
-      <div className="flex items-center text-white">
-        <Link href="/api/auth/signout" className="ml-4 text-red-400 hover:text-red-600">
-          Sign Out
-        </Link>
-      </div>
+      {/* Conditionally render the Sign Out link */}
+      {isAuthenticated && (
+        <div className="flex items-center text-white">
+          <Link href="/api/auth/signout" className="ml-4 text-red-400 hover:text-red-600">
+            Sign Out
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

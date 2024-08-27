@@ -8,13 +8,20 @@ interface ToggleButtonProps {
 
 const ToggleButton: React.FC<ToggleButtonProps> = ({ toggle }) => {
     return (
-        <motion.div 
-            className={`h-5 w-5 rounded-full ${
-                toggle ? 'bg-green-500' : 'bg-red-500'
-            }`}
-            layout
-            transition={{ type: 'spring', stiffness: 700, damping: 30 }}
-        />
+        <div
+            className={`w-12 h-6 flex items-center ${
+                toggle ? 'bg-green-400' : 'bg-gray-300'
+            } rounded-full p-1 cursor-pointer`}
+        >
+            <motion.div 
+                className="h-5 w-5 bg-white rounded-full shadow-md"
+                layout
+                transition={{ type: 'spring', stiffness: 700, damping: 30 }}
+                style={{
+                    transform: toggle ? 'translateX(1.25rem)' : 'translateX(0rem)',
+                }}
+            />
+        </div>
     );
 };
 

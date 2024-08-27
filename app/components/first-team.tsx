@@ -1,44 +1,93 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Autocomplete from '../components/auto-complete';
 
 interface FirstTeamProps {}
 
 const FirstTeam: FC<FirstTeamProps> = () => {
-  const [forwards, setForwards] = useState(['', '', '', '']);
-  const [defenders, setDefenders] = useState(['', '', '']);
-  const [goalie, setGoalie] = useState('');
+  const [players, setPlayers] = useState({
+    forwards: ['', '', '', ''],
+    defenders: ['', '', ''],
+    goalies: ['']
+  });
   const [hasVoted, setHasVoted] = useState<boolean>(false);
 
-  const handleVoteChange = (category: 'forwards' | 'defenders' | 'goalie', index: number, value: string) => {
-    if (category === 'forwards') {
-      const newForwards = [...forwards];
-      newForwards[index] = value;
-      setForwards(newForwards);
-    } else if (category === 'defenders') {
-      const newDefenders = [...defenders];
-      newDefenders[index] = value;
-      setDefenders(newDefenders);
-    } else if (category === 'goalie') {
-      setGoalie(value);
+  const handleVoteChange = (category: 'forwards' | 'defenders' | 'goalies', index: number, value: string) => {
+    setPlayers((prev) => ({
+      ...prev,
+      [category]: prev[category].map((item, i) => (i === index ? value : item))
+    }));
+  };
+
+  const fetchPlayers = async (position: 'FORWARD' | 'DEFENSE' | 'GOALIE', category: 'forwards' | 'defenders' | 'goalies') => {
+    try {
+      const response = await fetch(`/api/players?position=${position}`);
+      const data = await response.json();
+      const names = data.map((player: { name: string }) => player.name);
+      
+      setPlayers((prev) => ({
+        ...prev,
+        [category]: prev[category].map((item, i) => names[i] || item)
+      }));
+    } catch (error) {
+      console.error(`Error fetching ${position.toLowerCase()}s:`, error);
     }
   };
 
+  const checkIfVoted = async () => {
+    try {
+      const response = await fetch('/api/votes/players?category=ALL_TEAM');
+      if (response.ok) {
+        const vote = await response.json();
+        if (vote && vote.length > 0) {
+          setHasVoted(true);
+
+          const votedPlayers = vote.reduce(
+            (acc: { forwards: string[]; defenders: string[]; goalies: string[] }, v: any) => {
+              if (v.player.position === 'FORWARD') {
+                acc.forwards.push(v.player.name);
+              } else if (v.player.position === 'DEFENSEMAN') {
+                acc.defenders.push(v.player.name);
+              } else if (v.player.position === 'GOALIE') {
+                acc.goalies.push(v.player.name);
+              }
+              return acc;
+            },
+            { forwards: [], defenders: [], goalies: [] }
+          );
+
+          setPlayers(votedPlayers);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking vote status:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlayers('FORWARD', 'forwards');
+    fetchPlayers('DEFENSE', 'defenders');
+    fetchPlayers('GOALIE', 'goalies');
+    checkIfVoted();
+  }, []);
+
   const handleSubmit = async () => {
-    if (forwards.includes('') || defenders.includes('') || !goalie) {
+    const { forwards, defenders, goalies } = players;
+    if (forwards.includes('') || defenders.includes('') || goalies.includes('')) {
       alert('Please make all selections.');
       return;
     }
 
     try {
-      const response = await fetch('/api/votes', {
+      const response = await fetch('/api/votes/players', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          category: 'ALL_TEAM',
           forwards,
           defenders,
-          goalie,
+          goalies
         }),
       });
 
@@ -49,10 +98,12 @@ const FirstTeam: FC<FirstTeamProps> = () => {
       setHasVoted(true);
       alert('Your votes have been submitted!');
     } catch (error) {
-      console.error(error);
+      console.error('Failed to submit votes:', error);
       alert('Failed to submit votes');
     }
   };
+
+  const { forwards, defenders, goalies } = players;
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8 w-full max-w-lg">
@@ -66,7 +117,7 @@ const FirstTeam: FC<FirstTeamProps> = () => {
             <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Your Selections</h2>
             <p className="mb-2 text-gray-700 dark:text-gray-300">Forwards: {forwards.join(', ')}</p>
             <p className="mb-2 text-gray-700 dark:text-gray-300">Defenders: {defenders.join(', ')}</p>
-            <p className="mb-2 text-gray-700 dark:text-gray-300">Goalie: {goalie}</p>
+            <p className="mb-2 text-gray-700 dark:text-gray-300">Goalie: {goalies.join(', ')}</p>
           </div>
         </div>
       ) : (
@@ -79,7 +130,7 @@ const FirstTeam: FC<FirstTeamProps> = () => {
             {forwards.map((forward, index) => (
               <div key={index} className="mb-2">
                 <Autocomplete
-                  suggestions={[]} // Will fetch dynamically in the dashboard
+                  suggestions={forwards}
                   placeholder={`Select forward ${index + 1}`}
                   onValueChange={(value) => handleVoteChange('forwards', index, value)}
                 />
@@ -91,7 +142,7 @@ const FirstTeam: FC<FirstTeamProps> = () => {
             {defenders.map((defender, index) => (
               <div key={index} className="mb-2">
                 <Autocomplete
-                  suggestions={[]} // Will fetch dynamically in the dashboard
+                  suggestions={defenders}
                   placeholder={`Select defender ${index + 1}`}
                   onValueChange={(value) => handleVoteChange('defenders', index, value)}
                 />
@@ -101,16 +152,16 @@ const FirstTeam: FC<FirstTeamProps> = () => {
           <div className="mb-4">
             <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Goalie</h2>
             <Autocomplete
-              suggestions={[]} // Will fetch dynamically in the dashboard
+              suggestions={goalies}
               placeholder="Select goalie"
-              onValueChange={(value) => handleVoteChange('goalie', 0, value)}
+              onValueChange={(value) => handleVoteChange('goalies', 0, value)}
             />
           </div>
           <button
             type="button"
             className="mt-2 bg-black text-white font-bold py-2 px-4 rounded hover:bg-gray-700 dark:hover:bg-gray-600 transition duration-300"
             onClick={handleSubmit}
-            disabled={forwards.includes('') || defenders.includes('') || !goalie}
+            disabled={forwards.includes('') || defenders.includes('') || goalies.includes('')}
           >
             Submit
           </button>

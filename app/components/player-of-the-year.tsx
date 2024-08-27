@@ -7,6 +7,7 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<string>('');
   const [hasVoted, setHasVoted] = useState<boolean>(false);
   const [players, setPlayers] = useState<{ name: string; id: string }[]>([]);
+  const [votedPlayer, setVotedPlayer] = useState<string>('');
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -18,7 +19,24 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
         console.error('Error fetching players:', error);
       }
     };
+
+    const checkIfVoted = async () => {
+      try {
+        const response = await fetch('/api/votes/players?category=PLAYER_OF_THE_YEAR');
+        if (response.ok) {
+          const vote = await response.json();
+          if (vote && vote.length > 0) {
+            setHasVoted(true);
+            setVotedPlayer(vote[0].player.name); 
+          }
+        }
+      } catch (error) {
+        console.error('Error checking vote status:', error);
+      }
+    };
+
     fetchPlayers();
+    checkIfVoted();
   }, []);
 
   const handleSubmit = async () => {
@@ -50,6 +68,7 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
       }
 
       setHasVoted(true);
+      setVotedPlayer(selectedPlayer);
       alert(`You voted for: ${selectedPlayer}`);
     } catch (error) {
       console.error(error);
@@ -65,7 +84,7 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
       {hasVoted ? (
         <div className="text-center">
           <p className="mb-4 text-gray-700 dark:text-gray-300">Thank you for voting!</p>
-          <p className="font-bold text-black dark:text-white">You voted for: {selectedPlayer}</p>
+          <p className="font-bold text-black dark:text-white">You voted for: {votedPlayer}</p>
         </div>
       ) : (
         <>

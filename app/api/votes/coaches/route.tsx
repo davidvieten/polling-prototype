@@ -55,3 +55,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Error creating vote' }, { status: 500 });
   }
 }
+
+export async function GET(request: NextRequest) {
+  try {
+    const votes = await prisma.vote.findMany({
+      where: { coachId: { not: null } },
+      include: { coach: true, user: true },
+    });
+    return NextResponse.json(votes);
+  } catch (error) {
+    console.error('Error fetching coach votes:', error);
+    return NextResponse.json({ error: 'Error fetching coach votes' }, { status: 500 });
+  }
+}

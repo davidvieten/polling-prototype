@@ -54,3 +54,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Error creating vote' }, { status: 500 });
   }
 }
+
+export async function GET(request: NextRequest) {
+  try {
+    const votes = await prisma.vote.findMany({
+      where: { playerId: { not: null } },
+      include: { player: true, user: true },
+    });
+    return NextResponse.json(votes);
+  } catch (error) {
+    console.error('Error fetching player votes:', error);
+    return NextResponse.json({ error: 'Error fetching player votes' }, { status: 500 });
+  }
+}

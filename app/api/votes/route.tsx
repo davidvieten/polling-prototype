@@ -14,10 +14,12 @@ export async function GET(request: NextRequest) {
         ...(userId && { userId }),
       },
       include: {
-        player: true,
-        user: true,
+        player: true,  // Include player data if playerId is set
+        coach: true,   // Include coach data if coachId is set
+        user: true,    // Always include the user who cast the vote
       },
     });
+
     return NextResponse.json(votes);
   } catch (error) {
     console.error('Error fetching votes:', error);

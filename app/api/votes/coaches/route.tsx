@@ -3,7 +3,7 @@ import prisma from '@/prisma/client';
 import { z } from 'zod';
 import { VoteCategory } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/app/auth/nextauth';
 
 
 const voteSchema = z.object({

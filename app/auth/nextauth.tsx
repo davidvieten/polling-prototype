@@ -16,23 +16,23 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials.password) return null;
-
+            
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },
                 });
-
+            
                 if (!user) return null;
-
+            
                 const passwordsMatch = await bcrypt.compare(credentials.password, user.hashedPassword!);
                 if (!passwordsMatch) return null;
-
+            
                 return user;
-            },
+            }
         }),
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        }),
+//    GoogleProvider({
+//        clientId: process.env.GOOGLE_CLIENT_ID!,
+//        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+//    }),
     ],
     session: {
         strategy: "jwt",

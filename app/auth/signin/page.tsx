@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+
+import { FormEvent, useState } from 'react';
+import { getSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -10,22 +11,26 @@ const SignInPage = () => {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  // Explicitly define the type for the event parameter
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent default form submission behavior
-
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const email = event.currentTarget.email.value;
+    const password = event.currentTarget.password.value;
+  
     const result = await signIn('credentials', {
-      redirect: false, // Prevent automatic redirection
+      redirect: false,
       email,
       password,
+      callbackUrl: '/vote',  // Explicitly set the callback URL to /vote
     });
-
+  
     if (result?.error) {
-      setError('Sign in failed. Check the details you provided are correct.');
-    } else {
-      router.push('/'); // Redirect to the home page or another page on successful sign-in
+      setError("Sign-in failed: " + result.error);
+    } else if (result?.url) {
+      await getSession(); // Ensure session is updated before redirecting
+      router.push(result.url);
     }
   };
+  
 
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900 p-8 flex flex-col items-center justify-center">

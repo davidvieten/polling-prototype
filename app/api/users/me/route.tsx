@@ -7,6 +7,8 @@ import { authOptions } from '@/app/auth/nextauth';
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
+  console.log('Session:', session);
+
   if (!session || !session.user || !session.user.email) {
     return NextResponse.json({ error: 'Not authenticated or email is missing' }, { status: 401 });
   }
@@ -22,6 +24,8 @@ export async function GET(request: NextRequest) {
         school: true, 
       },
     });
+
+    console.log('User fetched:', user);
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

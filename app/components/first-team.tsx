@@ -4,30 +4,34 @@ import Autocomplete from '../components/auto-complete';
 interface FirstTeamProps {}
 
 const FirstTeam: FC<FirstTeamProps> = () => {
-  const [players, setPlayers] = useState({
-    forwards: ['', '', '', ''],
-    defenders: ['', '', ''],
-    goalies: ['']
-  });
+  const [forwards, setForwards] = useState<string[]>(['', '', '', '']);
+  const [defenders, setDefenders] = useState<string[]>(['', '', '']);
+  const [goalies, setGoalies] = useState<string[]>(['']);
   const [hasVoted, setHasVoted] = useState<boolean>(false);
+  const [availableForwards, setAvailableForwards] = useState<string[]>([]);
+  const [availableDefenders, setAvailableDefenders] = useState<string[]>([]);
+  const [availableGoalies, setAvailableGoalies] = useState<string[]>([]);
 
-  const handleVoteChange = (category: 'forwards' | 'defenders' | 'goalies', index: number, value: string) => {
-    setPlayers((prev) => ({
-      ...prev,
-      [category]: prev[category].map((item, i) => (i === index ? value : item))
-    }));
+  const handleVoteChange = (
+    category: 'forwards' | 'defenders' | 'goalies',
+    index: number,
+    value: string
+  ) => {
+    if (category === 'forwards') {
+      setForwards((prev) => prev.map((item, i) => (i === index ? value : item)));
+    } else if (category === 'defenders') {
+      setDefenders((prev) => prev.map((item, i) => (i === index ? value : item)));
+    } else if (category === 'goalies') {
+      setGoalies((prev) => prev.map((item, i) => (i === index ? value : item)));
+    }
   };
 
-  const fetchPlayers = async (position: 'FORWARD' | 'DEFENSE' | 'GOALIE', category: 'forwards' | 'defenders' | 'goalies') => {
+  const fetchPlayersByPosition = async (position: 'FORWARD' | 'DEFENSEMAN' | 'GOALIE', setFunction: React.Dispatch<React.SetStateAction<string[]>>) => {
     try {
       const response = await fetch(`/api/players?position=${position}`);
       const data = await response.json();
-      const names = data.map((player: { name: string }) => player.name);
-      
-      setPlayers((prev) => ({
-        ...prev,
-        [category]: prev[category].map((item, i) => names[i] || item)
-      }));
+      const playerNames = data.map((player: { name: string }) => player.name);
+      setFunction(playerNames);
     } catch (error) {
       console.error(`Error fetching ${position.toLowerCase()}s:`, error);
     }
@@ -37,25 +41,40 @@ const FirstTeam: FC<FirstTeamProps> = () => {
     try {
       const response = await fetch('/api/votes/players?category=ALL_TEAM');
       if (response.ok) {
-        const vote = await response.json();
-        if (vote && vote.length > 0) {
-          setHasVoted(true);
+        const votes = await response.json();
+        if (votes && votes.length > 0) {
+          const votedPlayers = {
+            forwards: ['', '', '', ''],
+            defenders: ['', '', ''],
+            goalies: ['']
+          };
 
-          const votedPlayers = vote.reduce(
-            (acc: { forwards: string[]; defenders: string[]; goalies: string[] }, v: any) => {
-              if (v.player.position === 'FORWARD') {
-                acc.forwards.push(v.player.name);
-              } else if (v.player.position === 'DEFENSEMAN') {
-                acc.defenders.push(v.player.name);
-              } else if (v.player.position === 'GOALIE') {
-                acc.goalies.push(v.player.name);
+          votes.forEach((vote: any) => {
+            if (vote.category === 'ALL_TEAM') {
+              if (vote.player.position === 'FORWARD') {
+                const forwardIndex = votedPlayers.forwards.findIndex(vp => vp === '');
+                if (forwardIndex !== -1) votedPlayers.forwards[forwardIndex] = vote.player.name;
+              } else if (vote.player.position === 'DEFENSEMAN') {
+                const defenderIndex = votedPlayers.defenders.findIndex(vp => vp === '');
+                if (defenderIndex !== -1) votedPlayers.defenders[defenderIndex] = vote.player.name;
+              } else if (vote.player.position === 'GOALIE') {
+                votedPlayers.goalies[0] = vote.player.name;
               }
-              return acc;
-            },
-            { forwards: [], defenders: [], goalies: [] }
-          );
+            }
+          });
 
-          setPlayers(votedPlayers);
+          setForwards(votedPlayers.forwards);
+          setDefenders(votedPlayers.defenders);
+          setGoalies(votedPlayers.goalies);
+
+          // Check if all positions are filled to mark voting as complete
+          if (
+            !votedPlayers.forwards.includes('') &&
+            !votedPlayers.defenders.includes('') &&
+            !votedPlayers.goalies.includes('')
+          ) {
+            setHasVoted(true);
+          }
         }
       }
     } catch (error) {
@@ -64,14 +83,13 @@ const FirstTeam: FC<FirstTeamProps> = () => {
   };
 
   useEffect(() => {
-    fetchPlayers('FORWARD', 'forwards');
-    fetchPlayers('DEFENSE', 'defenders');
-    fetchPlayers('GOALIE', 'goalies');
+    fetchPlayersByPosition('FORWARD', setAvailableForwards);
+    fetchPlayersByPosition('DEFENSEMAN', setAvailableDefenders);
+    fetchPlayersByPosition('GOALIE', setAvailableGoalies);
     checkIfVoted();
   }, []);
 
   const handleSubmit = async () => {
-    const { forwards, defenders, goalies } = players;
     if (forwards.includes('') || defenders.includes('') || goalies.includes('')) {
       alert('Please make all selections.');
       return;
@@ -87,7 +105,7 @@ const FirstTeam: FC<FirstTeamProps> = () => {
           category: 'ALL_TEAM',
           forwards,
           defenders,
-          goalies
+          goalies,
         }),
       });
 
@@ -102,8 +120,6 @@ const FirstTeam: FC<FirstTeamProps> = () => {
       alert('Failed to submit votes');
     }
   };
-
-  const { forwards, defenders, goalies } = players;
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8 w-full max-w-lg">
@@ -130,7 +146,7 @@ const FirstTeam: FC<FirstTeamProps> = () => {
             {forwards.map((forward, index) => (
               <div key={index} className="mb-2">
                 <Autocomplete
-                  suggestions={forwards}
+                  suggestions={availableForwards}
                   placeholder={`Select forward ${index + 1}`}
                   onValueChange={(value) => handleVoteChange('forwards', index, value)}
                 />
@@ -142,7 +158,7 @@ const FirstTeam: FC<FirstTeamProps> = () => {
             {defenders.map((defender, index) => (
               <div key={index} className="mb-2">
                 <Autocomplete
-                  suggestions={defenders}
+                  suggestions={availableDefenders}
                   placeholder={`Select defender ${index + 1}`}
                   onValueChange={(value) => handleVoteChange('defenders', index, value)}
                 />
@@ -152,7 +168,7 @@ const FirstTeam: FC<FirstTeamProps> = () => {
           <div className="mb-4">
             <h2 className="text-2xl font-semibold mb-2 text-black dark:text-white">Goalie</h2>
             <Autocomplete
-              suggestions={goalies}
+              suggestions={availableGoalies}
               placeholder="Select goalie"
               onValueChange={(value) => handleVoteChange('goalies', 0, value)}
             />

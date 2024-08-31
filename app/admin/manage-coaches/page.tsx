@@ -1,5 +1,4 @@
-'use client'; 
-import ToggleButton from '@/app/components/toggle-button';
+'use client';
 import { useRouter } from 'next/navigation'; 
 import { useState } from 'react';
 
@@ -10,9 +9,10 @@ export default function AddCoachPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [school, setSchool] = useState('');
+    const [notification, setNotification] = useState('');
 
     const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
+        event.preventDefault(); 
 
         try {
             const response = await fetch('/api/users', {
@@ -20,7 +20,7 @@ export default function AddCoachPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, email, school, password, }),
+                body: JSON.stringify({ name, email, school, password }),
             });
 
             if (response.ok) {
@@ -28,7 +28,13 @@ export default function AddCoachPage() {
                 setEmail('');
                 setPassword('');
                 setSchool('');
-                router.back(); 
+
+                setNotification('Coach has been added successfully!');
+
+                setTimeout(() => {
+                    setNotification('');
+                    router.back(); 
+                }, 3000);
             } else {
                 console.error('Error adding coach:', response.statusText);
             }
@@ -121,6 +127,12 @@ export default function AddCoachPage() {
                         </button>
                     </form>
                 </section>
+
+                {notification && (
+                    <div className="fixed bottom-4 right-4 bg-black text-white py-2 px-4 rounded-md shadow-md">
+                        {notification}
+                    </div>
+                )}
             </div>
         </main>
     );

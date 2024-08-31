@@ -4,17 +4,17 @@ import Autocomplete from '../components/auto-complete';
 interface DefensivePlayerOfTheYearProps {}
 
 const DefensivePlayerOfTheYear: FC<DefensivePlayerOfTheYearProps> = () => {
-  const [selectedPlayer, setSelectedPlayer] = useState<string>('');
+  const [selectedDefensivePlayer, setSelectedDefensivePlayer] = useState<string>('');
   const [hasVoted, setHasVoted] = useState<boolean>(false);
-  const [players, setPlayers] = useState<{ name: string; id: string }[]>([]);
-  const [votedPlayer, setVotedPlayer] = useState<string>('');
+  const [defensivePlayers, setDefensivePlayers] = useState<{ name: string; id: string }[]>([]);
+  const [votedDefensivePlayer, setVotedDefensivePlayer] = useState<string>('');
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
         const response = await fetch('/api/players');
         const data = await response.json();
-        setPlayers(data);
+        setDefensivePlayers(data);
       } catch (error) {
         console.error('Error fetching players:', error);
       }
@@ -24,12 +24,16 @@ const DefensivePlayerOfTheYear: FC<DefensivePlayerOfTheYearProps> = () => {
       try {
         const response = await fetch('/api/votes/players?category=DEFENSEMAN_OF_THE_YEAR');
         if (response.ok) {
-          const vote = await response.json();
-          if (vote && vote.length > 0) {
-            setHasVoted(true);
-            setVotedPlayer(vote[0].player.name); 
+          const votes = await response.json();
+          const defensiveVote = votes.find((vote: { category: string; }) => vote.category === 'DEFENSEMAN_OF_THE_YEAR');
+                
+          if (defensiveVote) {
+              setHasVoted(true);
+              setVotedDefensivePlayer(defensiveVote.player.name);
+          } else {
+              setVotedDefensivePlayer("No One");
           }
-        }
+      }
       } catch (error) {
         console.error('Error checking vote status:', error);
       }
@@ -40,13 +44,13 @@ const DefensivePlayerOfTheYear: FC<DefensivePlayerOfTheYearProps> = () => {
   }, []);
 
   const handleSubmit = async () => {
-    if (!selectedPlayer) {
+    if (!selectedDefensivePlayer) {
       alert('Please select a player.');
       return;
     }
 
     try {
-      const player = players.find(player => player.name === selectedPlayer);
+      const player = defensivePlayers.find(player => player.name === selectedDefensivePlayer);
       if (!player) {
         alert('Player not found.');
         return;
@@ -67,8 +71,8 @@ const DefensivePlayerOfTheYear: FC<DefensivePlayerOfTheYearProps> = () => {
         throw new Error('Something went wrong');
       }
       setHasVoted(true);
-      setVotedPlayer(selectedPlayer);
-      alert(`You voted for: ${selectedPlayer}`);
+      setVotedDefensivePlayer(selectedDefensivePlayer);
+      alert(`You voted for: ${selectedDefensivePlayer}`);
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +86,7 @@ const DefensivePlayerOfTheYear: FC<DefensivePlayerOfTheYearProps> = () => {
       {hasVoted ? (
         <div className="text-center">
           <p className="mb-4 text-gray-700 dark:text-gray-300">Thank you for voting!</p>
-          <p className="font-bold text-black dark:text-white">You voted for: {votedPlayer}</p>
+          <p className="font-bold text-black dark:text-white">You voted for: {votedDefensivePlayer}</p>
         </div>
       ) : (
         <>
@@ -91,16 +95,16 @@ const DefensivePlayerOfTheYear: FC<DefensivePlayerOfTheYearProps> = () => {
           </p>
           <div className="relative mb-4">
             <Autocomplete
-              suggestions={players.map(player => player.name)}
+              suggestions={defensivePlayers.map(player => player.name)}
               placeholder="Search for a player..."
-              onValueChange={setSelectedPlayer}
+              onValueChange={setSelectedDefensivePlayer}
             />
           </div>
           <button
             type="button"
             className="mt-2 bg-black text-white font-bold py-2 px-4 rounded hover:bg-gray-700 dark:hover:bg-gray-600 transition duration-300"
             onClick={handleSubmit}
-            disabled={!selectedPlayer}
+            disabled={!selectedDefensivePlayer}
           >
             Submit
           </button>

@@ -8,18 +8,7 @@ export default function AddPlayerPage() {
     const [name, setName] = useState('');
     const [position, setPosition] = useState('');
     const [school, setSchool] = useState('');
-
-    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-    };
-
-    const handlePositionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setPosition(event.target.value);
-    };
-
-    const handleSchoolChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSchool(event.target.value);
-    };
+    const [notification, setNotification] = useState('');
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -37,6 +26,14 @@ export default function AddPlayerPage() {
                 setName('');
                 setPosition('');
                 setSchool('');
+
+                setNotification('Player has been added successfully!');
+
+                setTimeout(() => {
+                    setNotification('');
+                    router.back(); 
+                }, 3000);
+
             } else {
                 console.error('Error adding player:', response.statusText);
             }
@@ -72,7 +69,7 @@ export default function AddPlayerPage() {
                                 type="text"
                                 id="name"
                                 value={name}
-                                onChange={handleNameChange}
+                                onChange={(e) => setName(e.target.value)}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
                             />
@@ -84,7 +81,7 @@ export default function AddPlayerPage() {
                             <select
                                 id="school"
                                 value={school}
-                                onChange={handleSchoolChange}
+                                onChange={(e) => setSchool(e.target.value)}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
                             >
@@ -102,7 +99,7 @@ export default function AddPlayerPage() {
                             <select
                                 id="position"
                                 value={position}
-                                onChange={handlePositionChange}
+                                onChange={(e) => setPosition(e.target.value)}
                                 className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-300"
                                 required
                             >
@@ -120,6 +117,11 @@ export default function AddPlayerPage() {
                         </button>
                     </form>
                 </section>
+                {notification && (
+                    <div className="fixed bottom-4 right-4 bg-black text-white py-2 px-4 rounded-md shadow-md">
+                        {notification}
+                    </div>
+                )}
             </div>
         </main>
     );

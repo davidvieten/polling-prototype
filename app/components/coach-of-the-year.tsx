@@ -27,7 +27,7 @@ const CoachOfTheYear: FC<CoachOfTheYearProps> = () => {
           const vote = await response.json();
           if (vote && vote.length > 0) {
             setHasVoted(true);
-            setVotedCoach(vote[0].coach.name); // Assuming the API returns the coach's name
+            setVotedCoach(vote[0].coach.name); 
           }
         }
       } catch (error) {

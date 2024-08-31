@@ -24,12 +24,16 @@ const PlayerOfTheYear: FC<PlayerOfTheYearProps> = () => {
       try {
         const response = await fetch('/api/votes/players?category=PLAYER_OF_THE_YEAR');
         if (response.ok) {
-          const vote = await response.json();
-          if (vote && vote.length > 0) {
-            setHasVoted(true);
-            setVotedPlayer(vote[0].player.name); 
+          const votes = await response.json();
+          const playerVote = votes.find((vote: { category: string; }) => vote.category === 'PLAYER_OF_THE_YEAR');
+                
+          if (playerVote) {
+              setHasVoted(true);
+              setVotedPlayer(playerVote.player.name);
+          } else {
+            setVotedPlayer("No One");
           }
-        }
+      }
       } catch (error) {
         console.error('Error checking vote status:', error);
       }

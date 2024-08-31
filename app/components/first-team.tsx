@@ -67,7 +67,6 @@ const FirstTeam: FC<FirstTeamProps> = () => {
           setDefenders(votedPlayers.defenders);
           setGoalies(votedPlayers.goalies);
 
-          // Check if all positions are filled to mark voting as complete
           if (
             !votedPlayers.forwards.includes('') &&
             !votedPlayers.defenders.includes('') &&

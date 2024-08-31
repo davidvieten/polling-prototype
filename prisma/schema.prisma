@@ -47,8 +47,8 @@ model User {
   hashedPassword String?
   isAdmin        Boolean   @default(false)
   school         SchoolCategory
-  votes          Vote[]    @relation("Voter")    // This field represents the votes cast by this user
-  coachVotes     Vote[]    @relation("CoachVotes")  // This field represents votes received as a coach
+  votes          Vote[]    @relation("Voter")    
+  coachVotes     Vote[]    @relation("CoachVotes")  
 
   accounts       Account[]
   sessions       Session[]

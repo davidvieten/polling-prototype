@@ -12,7 +12,7 @@ Many features are still being implemented, and some existing features may underg
 ## Key Features
 
 ### Implemented
-- **Authentication:** Integrated NextAuth.js with support for both email/password and Google OAuth, including role-based access control.
+- **Authentication:** Integrated NextAuth.js with support for email/password, including role-based access control.
 - **Player and Coach Management:** Basic functionality for adding and managing players and coaches within the system.
 - **Voting System:** GMs can vote across multiple categories, with rules like preventing self-voting enforced.
 
